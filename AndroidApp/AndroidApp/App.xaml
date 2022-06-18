@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="AndroidApp.App">
+	<!--
+		Define global resources and styles here, that apply to all pages in your app.
+	-->
+	<Application.Resources>
+		<ResourceDictionary>
+            <Color x:Key="Primary">#2196F3</Color>
+            <Style TargetType="Frame">
+				<Setter Property="Padding" Value="0"></Setter>
+				<Setter Property="CornerRadius" Value="0"></Setter>
+				<Setter Property="BackgroundColor" Value="Transparent"></Setter>
+			</Style>
+            <Style x:Key="frame-button" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="#f8f9fb"></Setter>
+                <Setter Property="HasShadow" Value="True"></Setter>
+                <Setter Property="Padding" Value="10"></Setter>
+                <Setter Property="CornerRadius" Value="10"></Setter>
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="FontSize" Value="18"></Setter>
+            </Style>
+            <Style x:Key="radio-button" TargetType="RadioButton">
+                <Setter Property="ControlTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <StackLayout Orientation="Horizontal" Spacing="10">
+                                <Frame BackgroundColor="#f8f9fb" Padding="20,10" CornerRadius="24" HasShadow="True">
+                                    <Label TextColor="{StaticResource Primary}" Text="{TemplateBinding Content}"></Label>
+                                </Frame>
+                                <Frame IsVisible="{TemplateBinding IsChecked}" VerticalOptions="CenterAndExpand" Padding="6" CornerRadius="6" BackgroundColor="Blue"></Frame>
+                            </StackLayout>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"></Setter>
+                <Setter Property="CornerRadius" Value="50"></Setter>
+                <Setter Property="Padding" Value="40,10"></Setter>
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"></Setter>
+                <Setter Property="TextColor" Value="White"></Setter>
+            </Style>
+		</ResourceDictionary>        
+	</Application.Resources>
+</Application>

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:viewmodels="clr-namespace:AndroidApp.ViewModels"
+             x:Class="AndroidApp.Views.CameraPage">
+
+    <ContentPage.Title>
+        <MultiBinding StringFormat="{}{0} {1}">
+            <Binding Path="CameraModel.Category"></Binding>
+            <Binding Path="CameraModel.Subcategory"></Binding>
+        </MultiBinding> <!-- Передача параметров из модели -->
+    </ContentPage.Title>
+
+    <ContentPage.BindingContext>
+        <viewmodels:CameraViewModel></viewmodels:CameraViewModel>
+        <!-- Привязка viewmodel -->
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="Black"></Setter>
+            <Setter Property="FontSize" Value="22"></Setter>
+        </Style>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+        <StackLayout BindingContext="{Binding CameraModel}" Spacing="20" Margin="20">
+            <Frame HeightRequest="200" CornerRadius="12" WidthRequest="140" HasShadow="True">
+                <Image Source="{Binding Source}"></Image>
+            </Frame>
+            <StackLayout>
+                <Label Text="Количество в наличии"></Label>
+                <!-- отображает разделяющую линию -->
+                <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                <StackLayout>
+                    <Label Text="{Binding Count, StringFormat='На складе: {0} шт.'}"></Label>
+                </StackLayout>
+            </StackLayout>
+            
+            <StackLayout>
+                <Label Text="Данные поставщика"></Label>
+                <!-- отображает разделяющую линию -->
+                <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                <StackLayout HeightRequest="100">
+                    <Label Text="{Binding Title, StringFormat='Наименование: {0}'}"></Label>
+                    <Label Text="{Binding Provider, StringFormat='Провайдер: {0}'}"></Label>
+                     <Label Text="{Binding Phone, StringFormat='Номер телефона: {0}'}"></Label> 
+                     <Label Text="{Binding Price, StringFormat='Цена поставки за шт: {0} р.'}"></Label>
+                </StackLayout>
+            </StackLayout>
+
+            <StackLayout Margin="0,20,0,0">
+                <Label Text="Характеристики товара"></Label>
+                <!-- отображает разделяющую линию -->
+                <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                <StackLayout Spacing="2">
+
+                    <Label Text="{Binding Cost, StringFormat='Цена розничной продажи: {0} р.'}"></Label>
+                    <Label>
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}ДхШхВ: {0}х{1}х{2} см">
+                                <Binding Path="Length"></Binding>
+                                <Binding Path="Weight"></Binding>
+                                <Binding Path="Height"></Binding>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

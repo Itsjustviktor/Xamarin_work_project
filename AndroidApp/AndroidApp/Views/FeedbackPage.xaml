@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:listCollection="clr-namespace:System.Collections.Generic;assembly=netstandard"
+			 xmlns:combobox="clr-namespace:Syncfusion.XForms.ComboBox;assembly=Syncfusion.SfComboBox.XForms" 
+             xmlns:selector="clr-namespace:AndroidApp.Views.Selector"
+             xmlns:viewmodels="clr-namespace:AndroidApp.ViewModels"
+             xmlns:models="clr-namespace:AndroidApp.Models"
+             x:Class="AndroidApp.Views.FeedbackPage"
+			 Title="Обратная связь">
+
+	<ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="ResolvedQuestionTemplate">
+                <StackLayout Spacing="4" Padding="0,0">
+                    
+                    <!-- Отображает закрытую задачу -->
+                    <Label>
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}#{0} - {1}">
+                                <Binding Path="Code"></Binding>
+                                <Binding Path="Phone"></Binding>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                    <!-- отображает разделяющую линию -->
+                    <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                    <!-- Основная View -->
+                    <StackLayout Spacing="12" Padding="0,14">
+                        <StackLayout.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="TextColor" Value="Gray"></Setter>
+                                <Setter Property="FontSize" Value="25"></Setter>
+                            </Style>
+                        </StackLayout.Resources>
+                        
+                        <Label Text="{Binding BuyerFirstName, StringFormat='Имя - {0}'}"></Label>
+                        <Label Text="{Binding Status, StringFormat='Статус - {0}'}"></Label>
+                        <Label Text="{Binding QuestionString, StringFormat='Проблема - {0}'}"></Label>
+                    </StackLayout>
+                    
+                    <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                </StackLayout>
+            </DataTemplate>
+
+            <!-- Открытая заяка из селектора-->
+            <DataTemplate x:Key="QuestionTemplate">
+                <!-- Привязка к контексту -->
+                <StackLayout Spacing="4" BindingContext="{Binding .}">
+
+                    <!-- Отображает открытую задачу -->
+                    <Label>
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}#{0} - {1}">
+                                <Binding Path="Code"></Binding>
+                                <Binding Path="Phone"></Binding>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+
+                    <!-- отображает разделяющую линию -->
+                    <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+
+                    <!-- Основная View -->
+                    <StackLayout Spacing="12" Padding="0,14">
+                        <Label Text="{Binding BuyerFirstName, StringFormat='Имя - {0}'}"></Label>
+                        <StackLayout Orientation="Horizontal" Spacing="6">
+                            <Label Text="Статус -" VerticalOptions="CenterAndExpand"></Label>
+
+                            <!-- Отображение статусов -->
+                            <Picker Title="Не вырано!" ItemsSource="{Binding States}" SelectedItem="{Binding Status, Mode=TwoWay}" HorizontalOptions="FillAndExpand" FontSize="20"></Picker>
+                        </StackLayout>
+
+                        <StackLayout Orientation="Vertical">
+                            <Label Text="Проблема -"></Label>
+                            <Frame BorderColor="Black" CornerRadius="6" Padding="4">
+                                <Editor Text="{Binding QuestionString}" HeightRequest="200" MaxLength="500"></Editor>
+                            </Frame>
+                        </StackLayout>
+
+                        <Button Text="Обновить инф." 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FeedbackViewModel}}, Path=UpdateQuestionCommand}" 
+                                CommandParameter="{Binding .}">
+                        </Button>
+                    </StackLayout>
+                    
+                    <BoxView BackgroundColor="Gray" HeightRequest="1"></BoxView>
+                </StackLayout>
+            </DataTemplate>
+        </ResourceDictionary>
+
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="Black"></Setter>
+            <Setter Property="FontSize" Value="19"></Setter>
+        </Style>
+
+        <Style x:Key="radio-button" TargetType="RadioButton">
+            <Setter Property="ControlTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Frame BackgroundColor="Transparent" Padding="20,10" CornerRadius="24" HasShadow="True">
+                                <Label TextColor="Black" Text="{TemplateBinding Content}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{TemplateBinding IsChecked}" Value="True">
+                                            <Setter Property="TextColor" Value="{StaticResource Primary}"></Setter>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+
+                                <Frame.Triggers>
+                                    <DataTrigger TargetType="Frame" Binding="{TemplateBinding IsChecked}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="White"></Setter>
+                                    </DataTrigger>
+                                </Frame.Triggers>
+                            </Frame>
+                        </StackLayout>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <ContentPage.BindingContext>
+        <viewmodels:FeedbackViewModel></viewmodels:FeedbackViewModel>
+    </ContentPage.BindingContext>
+	
+	<ContentPage.Content>
+        <RefreshView IsRefreshing="{Binding IsRefresh}" Command="{Binding SortCommand}">
+            <ScrollView>
+                <StackLayout VerticalOptions="StartAndExpand">
+
+                    <!-- Кнопки -->
+                    <Frame Padding="30,22">
+                        <Frame HorizontalOptions="CenterAndExpand" BackgroundColor="LightGray" CornerRadius="36" Padding="6">
+                            <StackLayout Orientation="Horizontal" Spacing="32">
+                                <RadioButton Style="{StaticResource radio-button}" Content="Все звонки" HorizontalOptions="StartAndExpand" IsChecked="{Binding IsAll}">
+                                    <RadioButton.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SearchCommand}" CommandParameter="{Binding Source={x:Reference Name=SearchEntry}, Path=Text}"></TapGestureRecognizer>
+                                    </RadioButton.GestureRecognizers>
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource radio-button}" Content="Перезвонить" HorizontalOptions="EndAndExpand" IsChecked="{Binding IsCallBack}">
+                                    <RadioButton.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SearchCommand}" CommandParameter="{Binding Source={x:Reference Name=SearchEntry}, Path=Text}"></TapGestureRecognizer>
+                                    </RadioButton.GestureRecognizers>
+                                </RadioButton>
+                            </StackLayout>
+                        </Frame>
+                    </Frame>
+
+                    <BoxView BackgroundColor="LightGray" HeightRequest="0.5"></BoxView>
+
+                    <!-- searchButton -->
+                    <Frame Padding="30,10">
+                        <StackLayout Orientation="Horizontal">
+                            <Label VerticalOptions="CenterAndExpand" Text="Номер тел."></Label>
+                            <Entry x:Name="SearchEntry" HorizontalOptions="FillAndExpand" Text="{Binding Search}"></Entry>
+                            <Frame VerticalOptions="CenterAndExpand" CornerRadius="30" Padding="10" BackgroundColor="LightGray">
+                                <Label Text="Поиск" TextColor="Black"></Label>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SearchCommand}" CommandParameter="{Binding Source={x:Reference Name=SearchEntry}, Path=Text}"></TapGestureRecognizer>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </StackLayout>
+                    </Frame>
+
+                    <!-- коллекция задач -->
+                    <Frame Padding="30,10">
+                        <StackLayout BindableLayout.ItemsSource="{Binding Collection}"  SizeChanged="ReloadLayoutPage">
+                            <StackLayout.Resources>
+                                <Style TargetType="Label">
+                                    <Setter Property="TextColor" Value="Black"></Setter>
+                                    <Setter Property="FontSize" Value="25"></Setter>
+                                </Style>
+                            </StackLayout.Resources>
+
+                            <BindableLayout.ItemTemplateSelector>
+                                <selector:QuestionItemDataTemplateSelector QuestionTemplate="{StaticResource QuestionTemplate}"
+																   ResolvedQuestionTemplate="{StaticResource ResolvedQuestionTemplate}">
+                                </selector:QuestionItemDataTemplateSelector>
+                            </BindableLayout.ItemTemplateSelector>
+                            <BindableLayout.EmptyViewTemplate>
+                                <DataTemplate>
+                                    <Label Text="Список пуст!"></Label>
+                                </DataTemplate>
+                            </BindableLayout.EmptyViewTemplate>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </ScrollView>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>
